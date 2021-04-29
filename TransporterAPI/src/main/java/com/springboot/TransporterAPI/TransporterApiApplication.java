@@ -8,6 +8,7 @@ public class TransporterApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TransporterApiApplication.class, args);
+		
 	}
 
 }
