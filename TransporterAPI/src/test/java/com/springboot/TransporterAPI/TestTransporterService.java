@@ -27,7 +27,7 @@ import com.springboot.TransporterAPI.Services.TransporterServiceImpl;
 
 import org.junit.jupiter.api.Order;
 @SpringBootTest
-public class TestTransorterService {
+public class TestTransporterService {
 	
 	
 	@Autowired
@@ -519,3 +519,4 @@ public class TestTransorterService {
 	}
 
 }
+
