@@ -178,7 +178,7 @@ public class TransporterServiceImpl implements TransporterService {
 			if (updateTransporter.getTransporterName() != null) {
 				if (updateTransporter.getTransporterName().trim().length()<1) {
 					updateResponse.setStatus(CommonConstants.error);
-					updateResponse.setMessage(CommonConstants.emptyCompanyNameError);
+					updateResponse.setMessage(CommonConstants.emptyNameError);
 					return updateResponse;
 				}
 				transporter.setTransporterName(updateTransporter.getTransporterName().trim());
@@ -187,7 +187,7 @@ public class TransporterServiceImpl implements TransporterService {
 			if (updateTransporter.getTransporterLocation() != null) {
 				if (updateTransporter.getTransporterLocation().trim().length()<1) {
 					updateResponse.setStatus(CommonConstants.error);
-					updateResponse.setMessage(CommonConstants.emptyCompanyNameError);
+					updateResponse.setMessage(CommonConstants.emptyLocationError);
 					return updateResponse;
 				}
 				transporter.setTransporterLocation(updateTransporter.getTransporterLocation().trim());

@@ -18,4 +18,9 @@ public class CommonConstants {
 	public static String emptyNameError = "Name cannot be empty or cannot contain only whitespaces";
 	public static String emptyLocationError = "Location cannot be empty or cannot contain only whitespaces";
 	public static String idNotGenerated = "Id not generated";
+	
+	public static long pagesize = 15;
+	public static String URI = "/transporter";
+	
+	public static String BASEURI = "http://localhost:8080/transporter";
 }
