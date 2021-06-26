@@ -154,7 +154,7 @@ public class TestTransporterController {
 		
 		String inputJson = mapToJson(updatetransporter);
 		when(transporterservice.updateTransporter("transporter:0de885e0-5f43-4c68-8dde-0000000000001"
-				, updatetransporter));
+				, updatetransporter)).thenReturn(transporterupdateresponse);
 		
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/transporter/transporter:0de885e0-5f43-4c68-8dde-0000000000001")
 				.accept(MediaType.APPLICATION_JSON).content(inputJson).contentType(MediaType.APPLICATION_JSON);

@@ -90,7 +90,7 @@ public class TestTransorterService {
 		TransporterCreateResponse transportercreateresponse = new TransporterCreateResponse(
 				CommonConstants.error, CommonConstants.IncorrecPhoneNoError,
 				CommonConstants.idNotGenerated, null,
-				null, null, null, null, null, null, false);
+				null, null, null, null, null, null, null);
 		
 		TransporterCreateResponse transportercreateresponseres = transporterservice.addTransporter(posttransporter);
 		
@@ -100,13 +100,13 @@ public class TestTransorterService {
 	
 	@Test
 	@Order(1)
-	public void addTransporterfail_phonenois_alreadypresent()
+	public void addTransporterfail_phoneno_is_alreadypresent()
 	{
 		PostTransporter posttransporter = new PostTransporter((Long) 9999999991L,
 				"transporter1", "company1", "Nagpur", "link1");
 		
 		TransporterCreateResponse transportercreateresponse = new TransporterCreateResponse(
-				CommonConstants.pending, CommonConstants.accountExist,
+				CommonConstants.error, CommonConstants.accountExist,
 				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", (Long) 9999999991L,
 				"transporter1", "company1", "Nagpur", "link1", false, false, false);
 		
@@ -117,6 +117,11 @@ public class TestTransorterService {
 		
 		TransporterCreateResponse transportercreateresponseres = transporterservice.addTransporter(posttransporter);
 		transportercreateresponseres.setTransporterId("transporter:0de885e0-5f43-4c68-8dde-0000000000001");
+		
+		System.err.println("****************");
+		System.err.println("a: " + transportercreateresponse);
+		System.err.println("b: " + transportercreateresponseres);
+		System.err.println("****************");
 		
 		assertEquals(transportercreateresponse, transportercreateresponseres);
 	}
@@ -132,7 +137,7 @@ public class TestTransorterService {
 		TransporterCreateResponse transportercreateresponse = new TransporterCreateResponse(
 				CommonConstants.error, CommonConstants.emptyCompanyNameError,
 				CommonConstants.idNotGenerated, null,
-				null, null, null, null, null, null, false);
+				null, null, null, null, null, null, null);
 		
 		Transporter transporter = createTransporters().get(0);
 		
@@ -140,6 +145,12 @@ public class TestTransorterService {
 		when(transporterdao.save(transporter)).thenReturn(transporter);
 		
 		TransporterCreateResponse transportercreateresponseres = transporterservice.addTransporter(posttransporter);
+		
+		System.err.println("****************");
+		System.err.println("a: " + transportercreateresponse);
+		System.err.println("b: " + transportercreateresponseres);
+		System.err.println("****************");
+		
 		assertEquals(transportercreateresponse, transportercreateresponseres);
 	}
 	// empty name
@@ -154,7 +165,7 @@ public class TestTransorterService {
 		TransporterCreateResponse transportercreateresponse = new TransporterCreateResponse(
 				CommonConstants.error, CommonConstants.emptyNameError,
 				CommonConstants.idNotGenerated, null,
-				null, null, null, null, null, null, false);
+				null, null, null, null, null, null, null);
 		
 		Transporter transporter = createTransporters().get(0);
 		
@@ -178,9 +189,9 @@ public class TestTransorterService {
 				"transporter1", "company1", "", "link1");
 		
 		TransporterCreateResponse transportercreateresponse = new TransporterCreateResponse(
-				CommonConstants.error, CommonConstants.emptyNameError,
+				CommonConstants.error, CommonConstants.emptyLocationError,
 				CommonConstants.idNotGenerated, null,
-				null, null, null, null, null, null, false);
+				null, null, null, null, null, null, null);
 		
 		Transporter transporter = createTransporters().get(0);
 		
@@ -188,6 +199,10 @@ public class TestTransorterService {
 		when(transporterdao.save(transporter)).thenReturn(transporter);
 		
 		TransporterCreateResponse transportercreateresponseres = transporterservice.addTransporter(posttransporter);
+		System.err.println("****************");
+		System.err.println("a: " + transportercreateresponse);
+		System.err.println("b: " + transportercreateresponseres);
+		System.err.println("****************");
 		assertEquals(transportercreateresponse, transportercreateresponseres);
 	}
 	
@@ -278,12 +293,12 @@ public class TestTransorterService {
 	{
 		List<Transporter> transporters = createTransporters();
 		UpdateTransporter updatetransporter = new UpdateTransporter(null,
-				"transporter11", "company11", "Nagpur", "link11", false, false, false);
+				"transporter11", "company11", "Nagpur", "link11", true, true, false);
 		
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
 				CommonConstants.success,CommonConstants.updateSuccess,
 				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", (Long) 9999999991L,
-				"transporter1", "company1", "Nagpur", "link1", false, false, false
+				"transporter11", "company11", "Nagpur", "link11", true, true, false
 				);
 		
 		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
@@ -293,6 +308,11 @@ public class TestTransorterService {
 		
 		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
 				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		System.err.println("****************");
+		System.err.println("a: " + transporterupdateresponse);
+		System.err.println("b: " + transportersres);
+		System.err.println("****************");
 		
 		assertEquals(transporterupdateresponse, transportersres);
 	}
@@ -308,9 +328,9 @@ public class TestTransorterService {
 				"transporter11", "company11", "Nagpur", "link11", false, false, false);
 		
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
-				CommonConstants.success,CommonConstants.updateSuccess,
-				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", (Long) 9999999991L,
-				"transporter1", "company1", "Nagpur", "link1", false, false, false
+				CommonConstants.notFound,CommonConstants.accountNotExist,
+				null, null,
+				null, null, null, null, null, null, null
 				);
 		
 		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000009"))
@@ -320,6 +340,11 @@ public class TestTransorterService {
 		
 		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
 				"transporter:0de885e0-5f43-4c68-8dde-0000000000009", updatetransporter);
+		
+		System.err.println("****************");
+		System.err.println("a: " + transporterupdateresponse);
+		System.err.println("b: " + transportersres);
+		System.err.println("****************");
 		
 		assertEquals(transporterupdateresponse, transportersres);
 	}
@@ -336,14 +361,19 @@ public class TestTransorterService {
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
 				CommonConstants.error,CommonConstants.phoneNoUpdateError,
 				null, null,
-				null, null, null, null, null, null, false
+				null, null, null, null, null, null, null
 				);
 		
-		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000009"))
-		.thenReturn(Optional.empty());
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
 		
 		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
-				"transporter:0de885e0-5f43-4c68-8dde-0000000000009", updatetransporter);
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		System.err.println("****************");
+		System.err.println("a: " + transporterupdateresponse);
+		System.err.println("b: " + transportersres);
+		System.err.println("****************");
 		
 		assertEquals(transporterupdateresponse, transportersres);
 	}
@@ -360,38 +390,48 @@ public class TestTransorterService {
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
 				CommonConstants.error,CommonConstants.emptyNameError,
 				null, null,
-				null, null, null, null, null, null, false
+				null, null, null, null, null, null, null
 				);
 		
-		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000009"))
-		.thenReturn(Optional.empty());
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
 		
 		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
-				"transporter:0de885e0-5f43-4c68-8dde-0000000000009", updatetransporter);
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		System.err.println("****************");
+		System.err.println("a: " + transporterupdateresponse);
+		System.err.println("b: " + transportersres);
+		System.err.println("****************");
 		
 		assertEquals(transporterupdateresponse, transportersres);
 	}
-	// update fail empty company name
+	// update fail empty location
 	
 	@Test
 	@Order(1)
 	public void updateTransporter5()
 	{
 		List<Transporter> transporters = createTransporters();
-		UpdateTransporter updatetransporter = new UpdateTransporter(9999999991L,
+		UpdateTransporter updatetransporter = new UpdateTransporter(null,
 				"transporter11", "company11", "", "link11", false, false, false);
 		
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
 				CommonConstants.error,CommonConstants.emptyLocationError,
 				null, null,
-				null, null, null, null, null, null, false
+				null, null, null, null, null, null, null
 				);
 		
-		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000009"))
-		.thenReturn(Optional.empty());
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
 		
 		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
-				"transporter:0de885e0-5f43-4c68-8dde-0000000000009", updatetransporter);
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		System.err.println("****************");
+		System.err.println("a: " + transporterupdateresponse);
+		System.err.println("b: " + transportersres);
+		System.err.println("****************");
 		
 		assertEquals(transporterupdateresponse, transportersres);
 	}
@@ -402,20 +442,20 @@ public class TestTransorterService {
 	public void updateTransporter6()
 	{
 		List<Transporter> transporters = createTransporters();
-		UpdateTransporter updatetransporter = new UpdateTransporter(9999999991L,
+		UpdateTransporter updatetransporter = new UpdateTransporter(null,
 				"transporter11", "", "Nagpur", "link11", false, false, false);
 		
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
 				CommonConstants.error,CommonConstants.emptyCompanyNameError,
 				null, null,
-				null, null, null, null, null, null, false
+				null, null, null, null, null, null, null
 				);
 		
-		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000009"))
-		.thenReturn(Optional.empty());
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
 		
 		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
-				"transporter:0de885e0-5f43-4c68-8dde-0000000000009", updatetransporter);
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
 		
 		assertEquals(transporterupdateresponse, transportersres);
 	}
