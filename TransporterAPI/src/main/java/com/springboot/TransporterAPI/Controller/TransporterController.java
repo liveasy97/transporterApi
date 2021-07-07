@@ -28,7 +28,7 @@ public class TransporterController {
 	
 	@GetMapping("/home")
 	public String home() {
-		return "Welcome to transporterApi git action check...!!!";
+		return "Welcome to transporterApi git action check 2...!!!";
 	}
 	
 	@PostMapping("/transporter")
