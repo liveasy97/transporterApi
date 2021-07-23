@@ -16,4 +16,6 @@ public class PostTransporter {
 	private String companyName;
 	private String kyc;
 
+	private String token;
+
 }

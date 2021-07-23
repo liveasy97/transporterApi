@@ -16,4 +16,6 @@ public class TransporterCreateResponse {
 	private Boolean companyApproved;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;
+	
+	private String token;
 }
