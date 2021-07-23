@@ -12,12 +12,12 @@ public interface TransporterService {
 
 	public TransporterCreateResponse addTransporter(PostTransporter postTransporter);
 
-	public List<Transporter> getTransporters(Boolean transporterApproved, Boolean companyApproved, Integer pageNo);
+	public List<Transporter> getTransporters(Boolean transporterApproved, Boolean companyApproved, Integer pageNo, String token);
 
-	public TransporterUpdateResponse updateTransporter(String transporterId, UpdateTransporter updatetransporter);
+	public TransporterUpdateResponse updateTransporter(String transporterId, UpdateTransporter updatetransporter, String token);
 
-	public void deleteTransporter(String transporterId);
+	public void deleteTransporter(String transporterId,String token);
 
-	public Transporter getOneTransporter(String transporterId);
+	public Transporter getOneTransporter(String transporterId,String token);
 
 }
