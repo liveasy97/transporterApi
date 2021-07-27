@@ -30,7 +30,7 @@ jobs:
     - run: cd ~/actions-runner/deploy/transporterApi/transporterApi/TransporterAPI
     - run: sudo docker container stop transporter-container || true
     - run: sudo docker container stop transporter-postgres || true
-    - run: sudo docker container rm transporter-container
+    - run: sudo docker container rm transporter-container || true
     - run: sudo docker image rm transporter || true
     - run: sudo docker build -t transporter .
     - run: sudo docker start transporter-postgres || sudo docker run --name transporter-postgres -e POSTGRES_PASSWORD=postgres -d postgres
