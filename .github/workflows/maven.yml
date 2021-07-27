@@ -13,7 +13,7 @@ defaults:
     
 jobs:
   build:
-    runs-on: [self-hosted, linux, x64, main]
+    runs-on: ['self-hosted', 'Linux', 'X64']
 
     steps:
     - uses: actions/checkout@v2
@@ -33,6 +33,6 @@ jobs:
     - run: sudo docker container rm transporter-container
     - run: sudo docker image rm transporter || true
     - run: sudo docker build -t transporter .
-    - run: sudo docker start transporter-postgres || sudo docker run --name transporter-postgres -e POSTGRES_PASSWORD=postgres -d transporterpostgres
+    - run: sudo docker start transporter-postgres || sudo docker run --name transporter-postgres -e POSTGRES_PASSWORD=postgres -d postgres
     - run: sudo docker run -p 9090:9090 --name transporter-container --link transporter-postgres:postgres transporter | echo "success" 
  
