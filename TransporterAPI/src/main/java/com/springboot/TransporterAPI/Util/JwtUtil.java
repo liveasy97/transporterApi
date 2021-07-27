@@ -10,6 +10,7 @@ import com.springboot.TransporterAPI.Entity.Transporter;
 import com.springboot.TransporterAPI.Exception.BusinessException;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -24,6 +25,10 @@ public class JwtUtil implements Serializable{
 	//retrieve token Id
 	public String extractId(String token) {
 		return extractClaim(token, Claims::getId);
+	}
+	
+	public String extractRole(String token) {
+		return (String) extractAllClaims(token).get("role");
 	}
 
 	public Date extractExpiration(String token) {
@@ -49,8 +54,7 @@ public class JwtUtil implements Serializable{
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60))
 				.setId(transporter.getTransporterId());
 
-
-		claims.put("phoneNo", transporter.getPhoneNo());
+		claims.put("role", "USER");
 
 		return Jwts.builder()
 				.setClaims(claims)		
@@ -58,8 +62,9 @@ public class JwtUtil implements Serializable{
 	}
 
 	public void validateToken(String token) {
+		Jws<Claims> jwt;
 		try {
-			Jwts.parser()
+			jwt=Jwts.parser()
 			.setSigningKey(SECRET_KEY)
 			.parseClaimsJws(token);
 		} catch(Exception e) {
@@ -67,5 +72,7 @@ public class JwtUtil implements Serializable{
 		}
 		if(isTokenExpired(token))
 			throw new BusinessException("token expired");
+//		System.out.println("===============hi==============");
+//		System.out.println(jwt);
 	}
 }

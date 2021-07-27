@@ -231,6 +231,14 @@ public class TransporterExceptionAdvice extends ResponseEntityExceptionHandler{
 		response.setMessage(ex.getMessage());
 		return buildResponseEntity(response);
 	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	protected ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex){
+		log.error("handleAccessDeniedException is started");
+		TransporterErrorResponse response = new TransporterErrorResponse(HttpStatus.UNAUTHORIZED);
+		response.setMessage(ex.getMessage());
+		return buildResponseEntity(response);
+	}
 
 	@ExceptionHandler(Exception.class)  
 	public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request)  

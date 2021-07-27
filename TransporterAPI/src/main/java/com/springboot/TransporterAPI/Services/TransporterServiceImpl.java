@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.springboot.TransporterAPI.Exception.AccessDeniedException;
 import com.springboot.TransporterAPI.Exception.BusinessException;
 import com.springboot.TransporterAPI.Exception.EntityNotFoundException;
 import com.springboot.TransporterAPI.Constants.CommonConstants;
@@ -119,8 +120,10 @@ public class TransporterServiceImpl implements TransporterService {
 	public Transporter getOneTransporter(String transporterId,String token) {
 		log.info("getOneTransporter service is started");
 
-		if(!jwtUtil.extractId(token).equals(transporterId))
-			throw new BusinessException("Not accessible through this Id");
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
 
 		Optional<Transporter> S = transporterdao.findById(transporterId);
 		if(S.isEmpty()) {
@@ -168,10 +171,10 @@ public class TransporterServiceImpl implements TransporterService {
 	@Override
 	public TransporterUpdateResponse updateTransporter(String transporterId, UpdateTransporter updateTransporter, String token) {
 		log.info("updateTransporter service is started");
-
-		if(!jwtUtil.extractId(token).equals(transporterId))
-			throw new BusinessException("Not accessible through this Id");
-
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
 		TransporterUpdateResponse updateResponse = new TransporterUpdateResponse();
 
 		Optional<Transporter> T = transporterdao.findById(transporterId);
@@ -239,10 +242,10 @@ public class TransporterServiceImpl implements TransporterService {
 	@Override
 	public void deleteTransporter(String transporterId, String token) {
 		log.info("deleteTransporter service is started");
-		
-		if(!jwtUtil.extractId(token).equals(transporterId))
-			throw new BusinessException("Not accessible through this Id");
-		
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
 		Optional<Transporter> T = transporterdao.findById(transporterId);
 		if(T.isEmpty())
 			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());
