@@ -21,6 +21,7 @@ import com.springboot.TransporterAPI.Entity.Transporter;
 import com.springboot.TransporterAPI.Model.PostTransporter;
 import com.springboot.TransporterAPI.Model.UpdateTransporter;
 import com.springboot.TransporterAPI.Services.TransporterService;
+import com.springboot.TransporterAPI.Util.FirebaseUtil;
 import com.springboot.TransporterAPI.Util.JwtUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,14 +36,21 @@ public class TransporterController {
 	@Autowired
 	private JwtUtil jwtUtil;
 
+	@Autowired
+	private FirebaseUtil firebaseUtil;
+
 	@GetMapping("/home")
 	public String home() {
 		return "Welcome to transporterApi git action check 2...!!!";
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> addTransporter(@Valid @RequestBody  PostTransporter transporter) {
+	public ResponseEntity<Object> addTransporter( 
+			@RequestHeader(value="Authorization", defaultValue="") String firebasetoken, 
+			@RequestBody @Valid PostTransporter transporter){
 		log.info("Post Controller Started");
+		
+		firebaseUtil.validateToken(firebasetoken);
 		return new ResponseEntity<>(service.addTransporter(transporter),HttpStatus.CREATED);
 	}
 
@@ -54,7 +62,7 @@ public class TransporterController {
 			@RequestParam(required = false) Boolean companyApproved,
 			@RequestParam(required = false) Integer pageNo){
 		log.info("Get with Params Controller Started");
-		System.out.println(jwtUtil.extractId(token));
+		//		System.out.println(jwtUtil.extractId(token));
 		jwtUtil.validateToken(token);
 		return new ResponseEntity<>(service.getTransporters(transporterApproved, companyApproved, pageNo,token),HttpStatus.OK);
 	}
@@ -64,6 +72,7 @@ public class TransporterController {
 			@RequestHeader(value = "Authorization", defaultValue = "") String token,
 			@PathVariable String transporterId){
 		log.info("Get by transporterId Controller Started");
+		jwtUtil.validateToken(token);
 		return new ResponseEntity<>( service.getOneTransporter(transporterId,token),HttpStatus.OK);
 	}
 
@@ -75,6 +84,7 @@ public class TransporterController {
 			@RequestBody UpdateTransporter transporter){
 
 		log.info("Put Controller Started");
+		jwtUtil.validateToken(token);
 		return new ResponseEntity<>(service.updateTransporter(transporterId, transporter,token),HttpStatus.OK);
 	}
 
@@ -84,6 +94,7 @@ public class TransporterController {
 			@RequestHeader(value = "Authorization", defaultValue = "") String token,
 			@PathVariable String transporterId){
 		log.info("Delete Controller Started");
+		jwtUtil.validateToken(token);
 		service.deleteTransporter(transporterId,token);
 		return new ResponseEntity<>("Sucessfully deleted",HttpStatus.OK);
 	}

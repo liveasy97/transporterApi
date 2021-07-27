@@ -239,8 +239,10 @@ public class TransporterServiceImpl implements TransporterService {
 	@Override
 	public void deleteTransporter(String transporterId, String token) {
 		log.info("deleteTransporter service is started");
+		
 		if(!jwtUtil.extractId(token).equals(transporterId))
 			throw new BusinessException("Not accessible through this Id");
+		
 		Optional<Transporter> T = transporterdao.findById(transporterId);
 		if(T.isEmpty())
 			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());

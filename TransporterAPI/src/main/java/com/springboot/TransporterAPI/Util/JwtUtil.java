@@ -46,7 +46,7 @@ public class JwtUtil implements Serializable{
 		Claims claims =Jwts.claims()
 				.setIssuer("liveasy")
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *5))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60))
 				.setId(transporter.getTransporterId());
 
 
