@@ -50,7 +50,7 @@ public class TransporterController {
 			@RequestBody @Valid PostTransporter transporter){
 		log.info("Post Controller Started");
 		
-//		firebaseUtil.validateToken(firebasetoken);
+		firebaseUtil.validateToken(firebasetoken);
 		return new ResponseEntity<>(service.addTransporter(transporter),HttpStatus.CREATED);
 	}
 

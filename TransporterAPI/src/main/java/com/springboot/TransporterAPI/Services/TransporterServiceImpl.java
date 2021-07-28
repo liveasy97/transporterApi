@@ -120,15 +120,16 @@ public class TransporterServiceImpl implements TransporterService {
 	public Transporter getOneTransporter(String transporterId,String token) {
 		log.info("getOneTransporter service is started");
 
+		Optional<Transporter> S = transporterdao.findById(transporterId);
+		if(S.isEmpty()) {
+			throw new EntityNotFoundException(Transporter.class,"id",transporterId);
+		}
+
 		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
 			if(!jwtUtil.extractId(token).equals(transporterId))
 				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
 		}
 
-		Optional<Transporter> S = transporterdao.findById(transporterId);
-		if(S.isEmpty()) {
-			throw new EntityNotFoundException(Transporter.class,"id",transporterId);
-		}
 		log.info("getOneTransporter response is returned");
 		return S.get();
 	}
@@ -171,15 +172,17 @@ public class TransporterServiceImpl implements TransporterService {
 	@Override
 	public TransporterUpdateResponse updateTransporter(String transporterId, UpdateTransporter updateTransporter, String token) {
 		log.info("updateTransporter service is started");
-		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
-			if(!jwtUtil.extractId(token).equals(transporterId))
-				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
-		}
+
 		TransporterUpdateResponse updateResponse = new TransporterUpdateResponse();
 
 		Optional<Transporter> T = transporterdao.findById(transporterId);
 		if(T.isEmpty())
 			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());
+
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
 
 		String temp="";
 		Transporter transporter = T.get();
@@ -242,13 +245,15 @@ public class TransporterServiceImpl implements TransporterService {
 	@Override
 	public void deleteTransporter(String transporterId, String token) {
 		log.info("deleteTransporter service is started");
+
+		Optional<Transporter> T = transporterdao.findById(transporterId);
+		if(T.isEmpty())
+			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());
+
 		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
 			if(!jwtUtil.extractId(token).equals(transporterId))
 				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
 		}
-		Optional<Transporter> T = transporterdao.findById(transporterId);
-		if(T.isEmpty())
-			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());
 
 		transporterdao.deleteById(transporterId);
 		log.info("transporter is deleted in the database");
