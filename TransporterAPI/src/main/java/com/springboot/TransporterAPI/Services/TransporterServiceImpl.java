@@ -153,7 +153,7 @@ public class TransporterServiceImpl implements TransporterService {
 			return list;
 		}
 		if(phoneNo != null) {
-			String validate = "[0-9]{10}$";
+			String validate = "^[6-9]\\d{9}$";
 			Pattern pattern = Pattern.compile(validate);
 			Matcher m = pattern.matcher(phoneNo);
 			
