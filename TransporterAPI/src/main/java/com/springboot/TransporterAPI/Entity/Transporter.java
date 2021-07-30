@@ -1,11 +1,15 @@
 package com.springboot.TransporterAPI.Entity;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.Data;
 
@@ -32,4 +36,7 @@ public class Transporter {
 
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
 	private boolean accountVerificationInProgress;
+	
+	@CreationTimestamp
+	public Timestamp timestamp;
 }

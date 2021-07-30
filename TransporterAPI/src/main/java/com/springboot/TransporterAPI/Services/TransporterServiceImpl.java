@@ -4,13 +4,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.springboot.TransporterAPI.Exception.BusinessException;
 import com.springboot.TransporterAPI.Exception.EntityNotFoundException;
@@ -38,7 +43,7 @@ public class TransporterServiceImpl implements TransporterService {
 		log.info("addTransporter service is started");
 
 		String temp="";
-		Transporter transporter =new Transporter();
+		Transporter transporter = new Transporter();
 		TransporterCreateResponse response = new TransporterCreateResponse();
 
 		Optional<Transporter> t = transporterdao.findByPhoneNo(postTransporter.getPhoneNo());
@@ -53,6 +58,7 @@ public class TransporterServiceImpl implements TransporterService {
 			response.setCompanyApproved(t.get().isCompanyApproved());
 			response.setAccountVerificationInProgress(t.get().isAccountVerificationInProgress());
 			response.setMessage(CommonConstants.accountExist);
+			response.setTimestamp(t.get().getTimestamp());
 			return response;
 		}
 
@@ -104,8 +110,8 @@ public class TransporterServiceImpl implements TransporterService {
 		response.setMessage(CommonConstants.approveRequest);
 
 		log.info("addTransporter response is returned");
+		response.setTimestamp(transporter.getTimestamp());
 		return response;
-
 	}
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
@@ -122,33 +128,53 @@ public class TransporterServiceImpl implements TransporterService {
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	@Override
-	public List<Transporter> getTransporters(Boolean transporterApproved, Boolean companyApproved, Integer pageNo) {
+	public List<Transporter> getTransporters(Boolean transporterApproved, Boolean companyApproved, String phoneNo, Integer pageNo){
 		log.info("getTransporters service is started");
 		List<Transporter> list = null;
 		if(pageNo == null) {
 			pageNo = 0;
 		}
 
-		Pageable page = PageRequest.of(pageNo, 15);
+		Pageable page = PageRequest.of(pageNo, 15, Sort.Direction.DESC, "timestamp");
 		if((companyApproved != null) && (transporterApproved != null)) {
 			list = transporterdao.findByTransporterCompanyApproved(transporterApproved, companyApproved, page);
-			Collections.reverse(list);
+			//Collections.reverse(list);
 			return list;
 		}
 
 		if(transporterApproved != null) {
 			list = transporterdao.findByTransporterApproved(transporterApproved, page);
-			Collections.reverse(list);
+			//Collections.reverse(list);
 			return list;
 		}
 		if(companyApproved != null) {
 			list = transporterdao.findByCompanyApproved(companyApproved, page);
-			Collections.reverse(list);
+			//Collections.reverse(list);
 			return list;
+		}
+		if(phoneNo != null) {
+			String validate = "^[6-9]\\d{9}$";
+			Pattern pattern = Pattern.compile(validate);
+			Matcher m = pattern.matcher(phoneNo);
+			
+			if(m.matches()) {
+				if(transporterdao.findByPhoneNo(phoneNo).isPresent()) {
+					list = List.of(transporterdao.findByPhoneNo(phoneNo).get());
+					return list;
+				}
+				else {
+					throw new EntityNotFoundException(Transporter.class, "phoneNo", phoneNo.toString());
+				}
+			}
+			else {
+				//throw new MethodArgumentNotValidException(null, null);
+				throw new BusinessException("Invalid mobile number");
+			}
+			
 		}
 
 		list = transporterdao.getAll(page);
-		Collections.reverse(list);
+		//Collections.reverse(list);
 
 		log.info("getTransporters response is returned");
 		return list;
@@ -217,6 +243,7 @@ public class TransporterServiceImpl implements TransporterService {
 		updateResponse.setAccountVerificationInProgress(transporter.isAccountVerificationInProgress());
 		updateResponse.setStatus(CommonConstants.success);
 		updateResponse.setMessage(CommonConstants.updateSuccess);
+		updateResponse.setTimestamp(transporter.getTimestamp());
 
 		log.info("updateTransporter response is returned");
 		return updateResponse;

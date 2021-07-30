@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.TransporterAPI.Entity.Transporter;
+import com.springboot.TransporterAPI.Exception.EntityNotFoundException;
 import com.springboot.TransporterAPI.Model.PostTransporter;
 import com.springboot.TransporterAPI.Model.UpdateTransporter;
 import com.springboot.TransporterAPI.Services.TransporterService;
@@ -46,9 +48,10 @@ public class TransporterController {
 	public ResponseEntity<List<Transporter>> getTransporters(
 			@RequestParam(required = false) Boolean transporterApproved,
 			@RequestParam(required = false) Boolean companyApproved,
+			@RequestParam(required = false) String phoneNo,
 			@RequestParam(required = false) Integer pageNo){
 		log.info("Get with Params Controller Started");
-		return new ResponseEntity<>(service.getTransporters(transporterApproved, companyApproved, pageNo),HttpStatus.OK);
+		return new ResponseEntity<>(service.getTransporters(transporterApproved, companyApproved, phoneNo, pageNo),HttpStatus.OK);
 	}
 
 	@GetMapping("/transporter/{transporterId}")
