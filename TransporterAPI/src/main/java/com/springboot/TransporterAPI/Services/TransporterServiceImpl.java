@@ -170,7 +170,6 @@ public class TransporterServiceImpl implements TransporterService {
 				//throw new MethodArgumentNotValidException(null, null);
 				throw new BusinessException("Invalid mobile number");
 			}
-			
 		}
 
 		list = transporterdao.getAll(page);
