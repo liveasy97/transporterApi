@@ -1,5 +1,6 @@
 package com.springboot.TransporterAPI;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -60,8 +61,6 @@ public class TestTransporterService {
 	@MockBean
 	private TransporterDao transporterdao;
 	
-
-	
 	//add success
 	@Test
 	@Order(1)
@@ -88,7 +87,6 @@ public class TestTransporterService {
 	}
 	
 	// add fail phone number null
-	
 	@Test
 	@Order(1)
 	public void addTransporterfail_phoneno_null()
@@ -103,7 +101,6 @@ public class TestTransporterService {
 	
 	
 	// invalid phone number
-	
 	@Test
 	@Order(2)
 	public void addTransporterfail_invalid_phoneno()
@@ -116,7 +113,6 @@ public class TestTransporterService {
 	
 	
 	// number is already present
-	
 	@Test
 	@Order(3)
 	public void addTransporterfail_phoneno_is_alreadypresent()
@@ -373,27 +369,17 @@ public class TestTransporterService {
 	    );
 	}
 	
-	// update fail empty name
-	// update fail empty location
-	// update fail empty location
 
 	//delete success
-	/*
+	
 	@Test
 	@Order(1)
 	public void deleteTransportersuccess()
 	{
 		List<Transporter> transporters = createTransporters();
-		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
-		.thenReturn(Optional.of(transporters.get(0)));
-		
-		TransporterDeleteResponse deletetransporter = new TransporterDeleteResponse(CommonConstants.success,
-				CommonConstants.deleteSuccess);
-
-		TransporterDeleteResponse deletetransporterres = transporterservice.deleteTransporter(
-				"transporter:0de885e0-5f43-4c68-8dde-0000000000001");
-		assertEquals(deletetransporter, deletetransporterres);
-	}*/
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001")).thenReturn(Optional.of(transporters.get(0)));
+		assertDoesNotThrow(()->transporterservice.deleteTransporter("transporter:0de885e0-5f43-4c68-8dde-0000000000001"));
+	}
 	
 	//delete fail
 	
