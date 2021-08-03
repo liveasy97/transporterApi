@@ -1,5 +1,9 @@
 package com.springboot.TransporterAPI.Response;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Data;
 
 @Data
@@ -16,4 +20,5 @@ public class TransporterUpdateResponse {
 	private Boolean companyApproved;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;
+	public Timestamp timestamp;
 }
