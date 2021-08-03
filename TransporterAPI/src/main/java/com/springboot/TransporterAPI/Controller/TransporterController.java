@@ -44,12 +44,12 @@ public class TransporterController {
 		return "Welcome to transporterApi git action check 2...!!!";
 	}
 
-	@PostMapping("/login")
+	@PostMapping("/transporter")
 	public ResponseEntity<Object> addTransporter( 
 			@RequestHeader(value="Authorization", defaultValue="") String firebasetoken, 
 			@RequestBody @Valid PostTransporter transporter){
 		log.info("Post Controller Started");
-		
+//		System.out.println(firebasetoken);
 		firebaseUtil.validateToken(firebasetoken);
 		return new ResponseEntity<>(service.addTransporter(transporter),HttpStatus.CREATED);
 	}

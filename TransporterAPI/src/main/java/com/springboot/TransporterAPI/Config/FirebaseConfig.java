@@ -22,12 +22,14 @@ public class FirebaseConfig {
 	public void Initialize() throws IOException {
 
 		InputStream serviceAccount =this.getClass().getClassLoader().getResourceAsStream("./firebase.json");
-
+		
 		FirebaseOptions options = FirebaseOptions.builder()
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 				.build();
 
-		FirebaseApp.initializeApp(options);
+		FirebaseApp Myapp =FirebaseApp.initializeApp(options);
+		
+		System.out.println(Myapp.getName());
 	}
 
 }

@@ -12,6 +12,7 @@ public class FirebaseUtil {
 	public void validateToken(String token){
 		try {
 			FirebaseToken decodedToken=FirebaseAuth.getInstance().verifyIdTokenAsync(token, true).get();
+//			System.out.println(decodedToken);
 		} catch (Exception e) {
 			throw new BusinessException("Invalid token");
 		}
