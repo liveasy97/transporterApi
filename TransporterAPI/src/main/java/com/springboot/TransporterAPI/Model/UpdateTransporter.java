@@ -12,4 +12,6 @@ public class UpdateTransporter {
 	private Boolean companyApproved;
 	private Boolean transporterApproved;
 	private Boolean accountVerificationInProgress;
+
+	private String token;
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import com.springboot.TransporterAPI.Exception.AccessDeniedException;
 import com.springboot.TransporterAPI.Exception.BusinessException;
 import com.springboot.TransporterAPI.Exception.EntityNotFoundException;
 import com.springboot.TransporterAPI.Constants.CommonConstants;
@@ -26,6 +27,7 @@ import com.springboot.TransporterAPI.Model.PostTransporter;
 import com.springboot.TransporterAPI.Model.UpdateTransporter;
 import com.springboot.TransporterAPI.Response.TransporterCreateResponse;
 import com.springboot.TransporterAPI.Response.TransporterUpdateResponse;
+import com.springboot.TransporterAPI.Util.JwtUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TransporterServiceImpl implements TransporterService {
 
+	@Autowired
+	private JwtUtil jwtUtil;
 
 	@Autowired
 	private TransporterDao transporterdao;
@@ -58,6 +62,8 @@ public class TransporterServiceImpl implements TransporterService {
 			response.setCompanyApproved(t.get().isCompanyApproved());
 			response.setAccountVerificationInProgress(t.get().isAccountVerificationInProgress());
 			response.setMessage(CommonConstants.accountExist);
+			
+			response.setToken(jwtUtil.generateToken(t.get()));
 			response.setTimestamp(t.get().getTimestamp());
 			return response;
 		}
@@ -109,6 +115,9 @@ public class TransporterServiceImpl implements TransporterService {
 		response.setStatus(CommonConstants.pending);
 		response.setMessage(CommonConstants.approveRequest);
 
+		final String token=jwtUtil.generateToken(transporter);
+		response.setToken(token);
+
 		log.info("addTransporter response is returned");
 		response.setTimestamp(transporter.getTimestamp());
 		return response;
@@ -116,19 +125,27 @@ public class TransporterServiceImpl implements TransporterService {
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	@Override
-	public Transporter getOneTransporter(String transporterId) {
+	public Transporter getOneTransporter(String transporterId,String token) {
 		log.info("getOneTransporter service is started");
+
 		Optional<Transporter> S = transporterdao.findById(transporterId);
 		if(S.isEmpty()) {
 			throw new EntityNotFoundException(Transporter.class,"id",transporterId);
 		}
+
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
+
 		log.info("getOneTransporter response is returned");
 		return S.get();
 	}
 
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	@Override
-	public List<Transporter> getTransporters(Boolean transporterApproved, Boolean companyApproved, String phoneNo, Integer pageNo){
+	public List<Transporter> getTransporters(Boolean transporterApproved, Boolean companyApproved, String phoneNo, Integer pageNo, String token) {
+
 		log.info("getTransporters service is started");
 		List<Transporter> list = null;
 		if(pageNo == null) {
@@ -182,7 +199,7 @@ public class TransporterServiceImpl implements TransporterService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public TransporterUpdateResponse updateTransporter(String transporterId, UpdateTransporter updateTransporter) {
+	public TransporterUpdateResponse updateTransporter(String transporterId, UpdateTransporter updateTransporter, String token) {
 		log.info("updateTransporter service is started");
 
 		TransporterUpdateResponse updateResponse = new TransporterUpdateResponse();
@@ -190,6 +207,11 @@ public class TransporterServiceImpl implements TransporterService {
 		Optional<Transporter> T = transporterdao.findById(transporterId);
 		if(T.isEmpty())
 			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());
+
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
 
 		String temp="";
 		Transporter transporter = T.get();
@@ -251,11 +273,17 @@ public class TransporterServiceImpl implements TransporterService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void deleteTransporter(String transporterId) {
+	public void deleteTransporter(String transporterId, String token) {
 		log.info("deleteTransporter service is started");
+
 		Optional<Transporter> T = transporterdao.findById(transporterId);
 		if(T.isEmpty())
 			throw new EntityNotFoundException(Transporter.class, "id", transporterId.toString());
+
+		if(!jwtUtil.extractRole(token).equals("ADMIN")) {
+			if(!jwtUtil.extractId(token).equals(transporterId))
+				throw new AccessDeniedException(Transporter.class,"id",jwtUtil.extractId(token));
+		}
 
 		transporterdao.deleteById(transporterId);
 		log.info("transporter is deleted in the database");

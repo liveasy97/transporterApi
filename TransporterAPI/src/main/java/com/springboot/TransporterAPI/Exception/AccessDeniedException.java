@@ -6,12 +6,12 @@ import java.util.stream.IntStream;
 
 import org.springframework.util.StringUtils;
 
-public class EntityNotFoundException extends RuntimeException{
+public class AccessDeniedException extends RuntimeException{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8003786879400862391L;
 
 	private static <K, V> Map<K, V> toMap(
 			Class<K> keyType, Class<V> valueType, String... entries) {
@@ -23,8 +23,8 @@ public class EntityNotFoundException extends RuntimeException{
 						Map::putAll);
 	}
 
-	public EntityNotFoundException(Class<?> clazz, String... searchParamsMap) {
-		super(EntityNotFoundException.generateMessage(
+	public AccessDeniedException(Class<?> clazz, String... searchParamsMap) {
+		super(AccessDeniedException.generateMessage(
 				clazz.getSimpleName(),
 				toMap(String.class, String.class, searchParamsMap)
 				));
@@ -32,9 +32,7 @@ public class EntityNotFoundException extends RuntimeException{
 
 	private static String generateMessage(String entity, Map<String, String> searchParams) {
 		return StringUtils.capitalize(entity) +
-				" was not found for parameters " +
+				" is not accessible by parameters " +
 				searchParams;
 	}
-
-
 }
