@@ -2,6 +2,7 @@ package com.springboot.TransporterAPI;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +28,18 @@ import com.springboot.TransporterAPI.Entity.Transporter;
 
 @DataJpaTest
 public class TestTransporterDao {
+	
+	public static void wait(int ms)
+	{
+	    try
+	    {
+	        Thread.sleep(ms);
+	    }
+	    catch(InterruptedException ex)
+	    {
+	        Thread.currentThread().interrupt();
+	    }
+	}
 	
 	@Autowired
 	private TestEntityManager entityManager;
@@ -60,7 +73,7 @@ public class TestTransporterDao {
 	
 	
 	@Test
-	public void getAll()
+	public void getAll() throws InterruptedException
 	{
 		List<Transporter> transporters = new ArrayList<Transporter>();
 		for(int i=1; i<=9; i++)
@@ -68,10 +81,19 @@ public class TestTransporterDao {
 			Transporter savedInDb = entityManager.persist(new Transporter("transporter:0de885e0-5f43-4c68-8dde-00000000000"+i, 
 					"999999999"+i,"transporter1", "company1", "Nagpur", "link1", false, false, false, 
 					Timestamp.valueOf("2021-07-28 23:28:50.134")));
+			entityManager.flush();
 			transporters.add(savedInDb);
+			wait(1);
+		}
+		
+		for(Transporter i:transporterdao.getAll(PageRequest.of(0, 15, Sort.Direction.DESC, "timestamp"))) {
+			System.err.println(i);
 		}
 
         Collections.reverse(transporters);
+        for(Transporter i:transporters) {
+			System.err.println(i);
+		}
 		
 		PageRequest firstPage = PageRequest.of(0, 5, Sort.Direction.DESC, "timestamp"),
 				    secondPage = PageRequest.of(1, 5, Sort.Direction.DESC, "timestamp"),
@@ -92,8 +114,10 @@ public class TestTransporterDao {
 			Transporter savedInDb = entityManager.persist(new Transporter("transporter:0de885e0-5f43-4c68-8dde-00000000000"+i, 
 					"99999999"+i,"transporter1", "company1", "Nagpur", "link1", (i%2==1), false, false, 
 					Timestamp.valueOf("2021-07-28 23:28:50.134")));
+			entityManager.flush();
 			if(i%2==1) transporterstrue.add(savedInDb);
 			else  transportersfalse.add(savedInDb);
+			wait(1);
 		}
 		Collections.reverse(transporterstrue);
 		Collections.reverse(transportersfalse);
@@ -124,8 +148,10 @@ public class TestTransporterDao {
 			Transporter savedInDb = entityManager.persist(new Transporter("transporter:0de885e0-5f43-4c68-8dde-00000000000"+i, 
 					"99999999"+i,"transporter1", "company1", "Nagpur", "link1", false, i%2==1, false, 
 					Timestamp.valueOf("2021-07-28 23:28:50.134")));
+			entityManager.flush();
 			if(i%2==1) transporterstrue.add(savedInDb);
 			else  transportersfalse.add(savedInDb);
+			wait(1);
 		}
 		Collections.reverse(transporterstrue);
 		Collections.reverse(transportersfalse);
@@ -155,8 +181,10 @@ public class TestTransporterDao {
 			Transporter savedInDb = entityManager.persist(new Transporter("transporter:0de885e0-5f43-4c68-8dde-00000000000"+i, 
 					"99999999"+i,"transporter1", "company1", "Nagpur", "link1", i%2==0, i%2==1, false,  
 					Timestamp.valueOf("2021-07-28 23:28:50.134")));
+			entityManager.flush();
 			if(i%2==1) transporterstrue.add(savedInDb);
 			else  transportersfalse.add(savedInDb);
+			wait(1);
 		}
 		Collections.reverse(transporterstrue);
 		Collections.reverse(transportersfalse);

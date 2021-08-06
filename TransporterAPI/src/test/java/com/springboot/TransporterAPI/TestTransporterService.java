@@ -3,11 +3,14 @@ package com.springboot.TransporterAPI;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,7 +91,7 @@ public class TestTransporterService {
 	
 	// add fail phone number null
 	@Test
-	@Order(1)
+	@Order(2)
 	public void addTransporterfail_phoneno_null()
 	{
 		PostTransporter posttransporter = new PostTransporter( null, "Nagpur", "transporter1", "company1", "link1");
@@ -102,7 +105,7 @@ public class TestTransporterService {
 	
 	// invalid phone number
 	@Test
-	@Order(2)
+	@Order(3)
 	public void addTransporterfail_invalid_phoneno()
 	{
 		PostTransporter posttransporter = new PostTransporter("99999999","Nagpur","transporter1", "company1",  "link1");
@@ -114,7 +117,7 @@ public class TestTransporterService {
 	
 	// number is already present
 	@Test
-	@Order(3)
+	@Order(4)
 	public void addTransporterfail_phoneno_is_alreadypresent()
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999991","Nagpur", "transporter1", "company1", "link1");
@@ -138,7 +141,7 @@ public class TestTransporterService {
 	// name company empty
 	
 	@Test
-	@Order(1)
+	@Order(5)
 	public void addTransporterfail_emptycompanyname()
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999991","Nagpur",
@@ -163,7 +166,7 @@ public class TestTransporterService {
 	// empty name
 	
 	@Test
-	@Order(1)
+	@Order(6)
 	public void addTransporterfail_emptyname()
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999991","Nagpur", "", "company1",  "link1");
@@ -184,10 +187,30 @@ public class TestTransporterService {
 		
 		assertEquals(transportercreateresponse, transportercreateresponseres);
 	}
+	
+	
+	//empty phone number
+	@Test
+	@Order(7)
+	public void addTransporterfail_emptyphonenumber()
+	{
+		PostTransporter posttransporter = new PostTransporter("  ","Nagpur", "", "company1",  "link1");
+		
+        Set<ConstraintViolation<PostTransporter>> constraintViolations = validator.validate(posttransporter);
+        
+		Iterator<ConstraintViolation<PostTransporter>> itr = constraintViolations.iterator();
+		Set<String> set = new HashSet<String>();
+		while(itr.hasNext()) set.add(itr.next().getMessage());
+
+		assertEquals(2, constraintViolations.size());
+		assertTrue(set.contains("Please enter a valid mobile number"));
+		assertTrue(set.contains("Phone no. cannot be blank!"));   
+	}
+	
 	// location empty
 	
 	@Test
-	@Order(1)
+	@Order(8)
 	public void addTransporterfail_emptylocation()
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999991", "", "transporter1", "company1", "link1");
@@ -212,7 +235,7 @@ public class TestTransporterService {
 	//get transporter by id success
 	
 	@Test
-	@Order(1)
+	@Order(9)
 	public void getbyid_success()
 	{
 		Transporter transporter = createTransporters().get(0);
@@ -225,7 +248,7 @@ public class TestTransporterService {
 	//get transporter by id fail
 	
 	@Test
-	@Order(1)
+	@Order(10)
 	public void getbyid_fail()
 	{
 		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001")).thenReturn(Optional.empty());
@@ -242,7 +265,7 @@ public class TestTransporterService {
 	
 	//transporterApproved, companyApproved, pageNo 
 	@Test
-	@Order(1)
+	@Order(11)
 	public void getTransporters1()
 	{
 		List<Transporter> transporters = createTransporters();
@@ -257,7 +280,7 @@ public class TestTransporterService {
 	//transporterApproved  
 	
 	@Test
-	@Order(1)
+	@Order(12)
 	public void getTransporters2()
 	{
 		List<Transporter> transporters = createTransporters();
@@ -271,7 +294,7 @@ public class TestTransporterService {
 	
 	//companyApproved
 	@Test
-	@Order(1)
+	@Order(13)
 	public void getTransporters3()
 	{
 		List<Transporter> transporters = createTransporters();
@@ -285,7 +308,7 @@ public class TestTransporterService {
 	
 	//phoneno
 	@Test
-	@Order(1)
+	@Order(14)
 	public void getTransporters4()
 	{
 		Transporter transporters = createTransporters().get(0);
@@ -297,22 +320,97 @@ public class TestTransporterService {
 	
 	// update success
 	@Test
-	@Order(1)
+	@Order(15)
 	public void updateTransporter1()
 	{
 		List<Transporter> transporters = createTransporters();
 		UpdateTransporter updatetransporter = new UpdateTransporter(null,
 				"Nagpur","transporter11", "company11",  "link11", true, true, false);
 
-		
 		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
 				CommonConstants.success,CommonConstants.updateSuccess,
 				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", "9999999991",
 				"transporter11", "company11", "Nagpur", "link11", true, true, false, Timestamp.valueOf("2021-07-28 23:28:50.134")
 				);
-		
 
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
 		
+		when(transporterdao.save(transporters.get(0))).thenReturn(transporters.get(0));
+		
+		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		assertEquals(transporterupdateresponse, transportersres);
+	}
+	
+	//name empty
+	@Test
+	@Order(16)
+	public void updateTransporter_nameempty()
+	{
+		List<Transporter> transporters = createTransporters();
+		UpdateTransporter updatetransporter = new UpdateTransporter(null,
+				"Nagpur","  ", "company11",  "link11", true, true, false);
+
+		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
+				CommonConstants.success,CommonConstants.updateSuccess,
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", "9999999991",
+				"transporter1", "company11", "Nagpur", "link11", true, true, false, Timestamp.valueOf("2021-07-28 23:28:50.134")
+				);
+
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
+		
+		when(transporterdao.save(transporters.get(0))).thenReturn(transporters.get(0));
+		
+		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		assertEquals(transporterupdateresponse, transportersres);
+	}
+	
+	//company name empty
+	@Test
+	@Order(17)
+	public void updateTransporter_companynameempty()
+	{
+		List<Transporter> transporters = createTransporters();
+		UpdateTransporter updatetransporter = new UpdateTransporter(null,
+				"Nagpur","transporter22", " ",  "link22", true, true, false);
+
+		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
+				CommonConstants.success,CommonConstants.updateSuccess,
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", "9999999991",
+				"transporter22", "company1", "Nagpur", "link22", true, true, false, Timestamp.valueOf("2021-07-28 23:28:50.134")
+				);
+
+		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
+		.thenReturn(Optional.of(transporters.get(0)));
+		
+		when(transporterdao.save(transporters.get(0))).thenReturn(transporters.get(0));
+		
+		TransporterUpdateResponse transportersres = transporterservice.updateTransporter(
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", updatetransporter);
+		
+		assertEquals(transporterupdateresponse, transportersres);
+	}
+	
+	//location empty
+	@Test
+	@Order(18)
+	public void updateTransporter_location_empty()
+	{
+		List<Transporter> transporters = createTransporters();
+		UpdateTransporter updatetransporter = new UpdateTransporter(null,
+				" ","transporter22", "company22",  "link22", true, true, false);
+
+		TransporterUpdateResponse transporterupdateresponse = new TransporterUpdateResponse(
+				CommonConstants.success,CommonConstants.updateSuccess,
+				"transporter:0de885e0-5f43-4c68-8dde-0000000000001", "9999999991",
+				"transporter22", "company22", "Nagpur", "link22", true, true, false, Timestamp.valueOf("2021-07-28 23:28:50.134")
+				);
+
 		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))
 		.thenReturn(Optional.of(transporters.get(0)));
 		
@@ -327,7 +425,7 @@ public class TestTransporterService {
 	// update fail id not found
 	
 	@Test
-	@Order(1)
+	@Order(19)
 	public void updateTransporter2()
 	{
 		List<Transporter> transporters = createTransporters();
@@ -349,7 +447,7 @@ public class TestTransporterService {
 	// update fail phone number not null
 	
 	@Test
-	@Order(1)
+	@Order(20)
 	public void updateTransporter3()
 	{
 		List<Transporter> transporters = createTransporters();
@@ -373,7 +471,7 @@ public class TestTransporterService {
 	//delete success
 	
 	@Test
-	@Order(1)
+	@Order(21)
 	public void deleteTransportersuccess()
 	{
 		List<Transporter> transporters = createTransporters();
@@ -384,7 +482,7 @@ public class TestTransporterService {
 	//delete fail
 	
 	@Test
-	@Order(1)
+	@Order(22)
 	public void deleteTransporterfail()
 	{
 		when(transporterdao.findById("transporter:0de885e0-5f43-4c68-8dde-0000000000001"))

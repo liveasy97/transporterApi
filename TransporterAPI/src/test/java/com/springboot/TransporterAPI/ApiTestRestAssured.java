@@ -54,7 +54,7 @@ public class ApiTestRestAssured {
 	private static long transporterpagecount_transporterapproved_true = 0;
 	private static long transporterpage_all = 0;
 	
-	private static long pagesize=15;
+	private static long pagesize=15, total_transporter_added=3;
 	
 	
 	@BeforeAll
@@ -80,7 +80,7 @@ public class ApiTestRestAssured {
 		Response response22;
 		while (true) {
 			response22 = RestAssured.given().param("pageNo", transporterpagecount_transporterapproved_true)
-					.param("transportApproved", true)
+					.param("transporterApproved", true)
 					.header("accept", "application/json").header("Content-Type", "application/json").get().then()
 					.extract().response();
 
@@ -180,7 +180,9 @@ public class ApiTestRestAssured {
 	}
 	
 	
-	//add shipper success
+	//add transporter with all paramaters not equal to null
+	//sending valid transporter
+	//getting valid response
 	@Test
 	@Order(1)
 	public void addtransportersuccess1() throws Exception
@@ -211,9 +213,11 @@ public class ApiTestRestAssured {
 		assertEquals("Sucessfully deleted", response2.asString());
 	}
 	
-	//few values null
+	//add transporter with all values null except phone number
+	//adding all null values except phoneNo
+	//getting response as all paramaters null except phoneNo
 	@Test
-	@Order(1)
+	@Order(2)
 	public void addtransportersuccess2() throws Exception
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999994", null, null, null, null);
@@ -240,13 +244,14 @@ public class ApiTestRestAssured {
 		assertEquals("Sucessfully deleted", response2.asString());
 	}
 	
-	// phone number null 
 	
+	// phone number null 
+	//add transporter with phone number null
+	//getting exception from annotation validation (Phone no. cannot be blank!)
 	@Test
-	@Order(1)
+	@Order(3)
 	public void addtransporterfail1() throws Exception
 	{
-		
 		PostTransporter posttransporter = new PostTransporter(null, "Nagpur", "transporter1", "company1",  "link1");
 		String inputJson = mapToJson(posttransporter);
 		
@@ -261,10 +266,11 @@ public class ApiTestRestAssured {
         		jsonPathEvaluator.get("transportererrorresponse.subErrors").toString());
 	}
 	
-	// numebr invalid 
-	
+	// number invalid 
+	//add transporter with invalid phone number (9 digit)
+	//getting response as exception from annotation validation (Please enter a valid mobile number)
 	@Test
-	@Order(1)
+	@Order(4)
 	public void addtransporterfail2() throws Exception
 	{
 		PostTransporter posttransporter = new PostTransporter("9999", "Nagpur", "transporter1", "company1",  "link1");
@@ -272,21 +278,21 @@ public class ApiTestRestAssured {
 		Response response = (Response) RestAssured.given().header("", "").body(inputJson).header("accept", "application/json")
 				.header("Content-Type", "application/json").post().then().extract().response();
 		
-		String transporterid = response.jsonPath().getString("shipperId");
+		String transporterid = response.jsonPath().getString("transporterId");
         
         JsonPath jsonPathEvaluator = response.jsonPath();
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.statusCode());
         assertEquals("Validation error", jsonPathEvaluator.get("transportererrorresponse.message").toString());
         assertEquals("[{field=phoneNo, message=Please enter a valid mobile number, rejectedValue=9999, object=postTransporter}]",
         		jsonPathEvaluator.get("transportererrorresponse.subErrors").toString());
-        
-        
 	}
+	//void spaces case
 	
 	// already present
-	
+	//add transporter with already exist phonenumber
+		//getting result as messgae as Account already exist and already existed result
 	@Test
-	@Order(1)
+	@Order(5)
 	public void addtransporterfail3() throws Exception
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999991", "Nagpur", "transporter1", "company1",  "link1");
@@ -299,10 +305,11 @@ public class ApiTestRestAssured {
         assertEquals("Account already exist", jsonPathEvaluator.get("message").toString());
 	}
 	
-	// transporter name empty
-	
+	// add transporter with transporter name empty
+	//empty transporter name
+	//response with transporter name = null
 	@Test
-	@Order(1)
+	@Order(6)
 	public void addtransporterfail4() throws Exception
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999994", "Nagpur", "", "company1",  "link1");
@@ -329,9 +336,11 @@ public class ApiTestRestAssured {
 		assertEquals("Sucessfully deleted", response2.asString());
 	}
 	
-	// company name empty
+	//add transporter with company name empty
+	//empty company name 
+	//get transporter with company name null 
 	@Test
-	@Order(1)
+	@Order(7)
 	public void addtransporterfail5() throws Exception
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999994", "Nagpur", "transporter1", "",  "link1");
@@ -358,10 +367,11 @@ public class ApiTestRestAssured {
 		assertEquals("Sucessfully deleted", response2.asString());
 	}
 	
-	// location empty
-	
+	//add trannsporter with location empty
+	//empty transporter location
+	// getting transporter with location null
 	@Test
-	@Order(1)
+	@Order(8)
 	public void addtransporterfail6() throws Exception
 	{
 		PostTransporter posttransporter = new PostTransporter("9999999994", "", "transporter1", "company1",  "link1");
@@ -389,10 +399,11 @@ public class ApiTestRestAssured {
 	}
 
 	
-	// update success
-	
+	//update transformer with all paramater not equal to null
+	//updating transporter with proper request
+	//getting proper response
 	@Test
-	@Order(8)
+	@Order(9)
 	public void updatetransportersuccess1() throws Exception
 	{
 		UpdateTransporter updatetransporter = new UpdateTransporter(null,
@@ -416,9 +427,11 @@ public class ApiTestRestAssured {
 		assertEquals(true, response.jsonPath().getBoolean("accountVerificationInProgress"));
 	}
 	
-	// few values null
+	//update transporter with all values null
+	//updating transporter with all value null
+	//getting transporter with prexisted values
 	@Test
-	@Order(8)
+	@Order(10)
 	public void updatetransportersuccess2() throws Exception
 	{
 		UpdateTransporter updatetransporter = new UpdateTransporter(null,
@@ -443,10 +456,12 @@ public class ApiTestRestAssured {
 		
 	}
 	
-	// phone number not null
-	
+	//updating transporter with all values not null including phone number
+	//phone number cannot be updated
+	//sending update request with transporter no not null
+	//getting response as exception  {Error: Phone no. can't be updated}
 	@Test
-	@Order(8)
+	@Order(11)
 	public void updatetransporterfail1() throws Exception
 	{
 		UpdateTransporter updatetransporter = new UpdateTransporter("9999999991",
@@ -463,105 +478,86 @@ public class ApiTestRestAssured {
 	}
 	
 	// getall
+		//checking that after adding three new shippers in setupfunction git added or not 
+		//checking whether last page contains expected number of transporter according to previously added data
+		//sending page as last page
+		//according to total number of already existed data and the datawe added in setup function of this testing (beforeall)
+		// we will check whether the last page contains expected number of data or not
 	@Test
-	@Order(14)
+	@Order(12)
 	public void get_all_page() throws Exception
-	{
-		long lastPageCount = transporter_all % pagesize;
-		long page = transporterpage_all;
-
-		if (lastPageCount >= pagesize - 2)
-			page++;
+	{	
+		long lastPageCount = (transporter_all + total_transporter_added)%pagesize;
+		long page = (transporter_all + total_transporter_added)/pagesize;
 		
 		Response response = RestAssured.given()
 				.param("pageNo", page)
 				.header("accept", "application/json").header("Content-Type", "application/json").get().then().extract()
 				.response();
 		
-		if(lastPageCount <= pagesize-3)
-		{
-			assertEquals(lastPageCount+3, response.jsonPath().getList("$").size());
-		}
-		else if(lastPageCount == pagesize-2)
-		{
-			assertEquals(1, response.jsonPath().getList("$").size());
-		}
-		else if(lastPageCount == pagesize-1)
-		{
-			assertEquals(2, response.jsonPath().getList("$").size());
-		}
-		else if(lastPageCount == pagesize)
-		{
-			assertEquals(3, response.jsonPath().getList("$").size());
-		}
+		assertEquals(lastPageCount, response.jsonPath().getList("$").size());
 	}
 	
 	// get company page
+	//get company approved true
+		//checking whether the number of transporter with companyapproved true are equal to expected numbers of user
+		//sending page as last page
+			//according to total number of already existed data and the data we added in setup function of this testing (beforeall)
+			// we will check whether the last page contains expected number of data or not
 	@Test
-	@Order(15)
-	public void get_company_page() throws Exception
+	@Order(13)
+	public void get_companyapprovedtrue() throws Exception
 	{
-		long lastPageCount = transportercount_companyapproved_true % pagesize;
-		long page = transporterpagecount_companyapproved_true;
+		long added_transporter_with_company_approved_true = 1;
+		long lastPageCount = (transportercount_companyapproved_true + added_transporter_with_company_approved_true)% pagesize;
+		long page = (transportercount_companyapproved_true+added_transporter_with_company_approved_true)/pagesize;
 
-		if (lastPageCount >= pagesize)
-			page++;
-		
 		Response response = RestAssured.given()
 				.param("pageNo", page)
 				.param("companyApproved", true)
 				.header("accept", "application/json").header("Content-Type", "application/json").get().then().extract()
 				.response();
 		
-		if(lastPageCount <= pagesize-1)
-		{
-			assertEquals(lastPageCount+1, response.jsonPath().getList("$").size());
-		}
-		else if(lastPageCount == pagesize)
-		{
-			assertEquals(1, response.jsonPath().getList("$").size());
-		}
+		assertEquals(lastPageCount, response.jsonPath().getList("$").size());
 	}
-	// get transporter page
 	
+	
+	// get transporter page
+	//get company approved true
+		//checking whether the number of transporter with transporterapproved true are equal to expected numbers of user
+		//sending page as last page
+			//according to total number of already existed data and the data we added in setup function of this testing (beforeall)
+			// we will check whether the last page contains expected number of data or not
 	@Test
-	@Order(15)
-	public void get_transporter_page() throws Exception
+	@Order(14)
+	public void get_transporterapprovedtrue() throws Exception
 	{
-		long lastPageCount = transporterpagecount_transporterapproved_true % pagesize;
-		long page = transporterpagecount_transporterapproved_true;
+		long added_transporter_with_transporter_approved_true = 1;
+		long lastPageCount = (transportercount_transporterapproved_true + added_transporter_with_transporter_approved_true)% pagesize;
+		long page = (transportercount_transporterapproved_true+added_transporter_with_transporter_approved_true)/pagesize;
 
-		if (lastPageCount >= pagesize)
-			page++;
-		
 		Response response = RestAssured.given()
 				.param("pageNo", page)
 				.param("transporterApproved", true)
 				.header("accept", "application/json").header("Content-Type", "application/json").get().then().extract()
 				.response();
-		
-		if(lastPageCount <= pagesize-1)
-		{
-			assertEquals(lastPageCount+1, response.jsonPath().getList("$").size());
-		}
-		else if(lastPageCount == pagesize)
-		{
-			assertEquals(1, response.jsonPath().getList("$").size());
-		}
+		assertEquals(lastPageCount, response.jsonPath().getList("$").size());
 	}
 	
 	// get transporter  company page
-	
+	//get company approved true
+	//checking whether the number of transporter with companyapproved true and transporterapproved true are equal to expected numbers of user
+	//sending page as last page
+	//according to total number of already existed data and the data we added in setup function of this testing (beforeall)
+	// we will check whether the last page contains expected number of data or not
 	@Test
 	@Order(15)
 	public void get_transporter_company_page() throws Exception
 	{
-		long lastPageCount = transporterpagecount_companyapproved_transporterapproved_true % pagesize;
-		long page = transporterpagecount_companyapproved_transporterapproved_true;
+		long added_transporter_with_company_transporter_approved_true = 1;
+		long lastPageCount = (transportercount_companyapproved_transporterapproved_true + added_transporter_with_company_transporter_approved_true)% pagesize;
+		long page = (transportercount_companyapproved_transporterapproved_true+added_transporter_with_company_transporter_approved_true)/pagesize;
 
-		if (lastPageCount >= pagesize)
-			page++;
-		
 		Response response = RestAssured.given()
 				.param("pageNo", page)
 				.param("companyApproved", true)
@@ -569,22 +565,17 @@ public class ApiTestRestAssured {
 				.header("accept", "application/json").header("Content-Type", "application/json").get().then().extract()
 				.response();
 		
-		if(lastPageCount <= pagesize-1)
-		{
-			assertEquals(lastPageCount+1, response.jsonPath().getList("$").size());
-		}
-		else if(lastPageCount == pagesize)
-		{
-			assertEquals(1, response.jsonPath().getList("$").size());
-		}
+		assertEquals(lastPageCount, response.jsonPath().getList("$").size());
 	}
 	
 	// get transporter  company
 	@Test
-	@Order(17)
+	@Order(16)
 	public void get_transporter_company() throws Exception
 	{
-		long lastPageCount = transportercount_companyapproved_transporterapproved_true % pagesize;
+		long added_transporter_with_company_transporter_approved_true = 1;
+		long lastPageCount = (transportercount_companyapproved_transporterapproved_true+added_transporter_with_company_transporter_approved_true )% pagesize;
+		long page = (transportercount_companyapproved_transporterapproved_true+added_transporter_with_company_transporter_approved_true)/pagesize;
 		
 		Response response = RestAssured.given()
 				.param("companyApproved", true)
@@ -592,34 +583,27 @@ public class ApiTestRestAssured {
 				.header("accept", "application/json").header("Content-Type", "application/json").get().then().extract()
 				.response();
 		
-		if(transporterpagecount_companyapproved_transporterapproved_true>=1 || lastPageCount>=pagesize-1)
-		{
-			assertEquals(pagesize, response.jsonPath().getList("$").size());
-		}
-		else
-		{
-			assertEquals(lastPageCount+1, response.jsonPath().getList("$").size());
-		}
+		if(page>0) assertEquals(pagesize, response.jsonPath().getList("$").size());
+		else assertEquals(lastPageCount, response.jsonPath().getList("$").size());
 	}
+	
 	// get page
+		//sending request without any paramater
+		//getting first page 
+		//we will check that first page contains equal elements as expected
 	@Test
-	@Order(14)
+	@Order(17)
 	public void get_all() throws Exception
 	{
-		long lastPageCount = transporter_all % pagesize;
+		long lastPageCount = (transporter_all + total_transporter_added)% pagesize;
+		long page = (transporter_all + total_transporter_added)/ pagesize;
 		
 		Response response = RestAssured.given()
 				.header("accept", "application/json").header("Content-Type", "application/json").get().then().extract()
 				.response();
 		
-		if(transporterpage_all>=1 || lastPageCount>=pagesize-3)
-		{
-			assertEquals(pagesize, response.jsonPath().getList("$").size());
-		}
-		else
-		{
-			assertEquals(lastPageCount+3, response.jsonPath().getList("$").size());
-		}
+		if(page>0) assertEquals(pagesize, response.jsonPath().getList("$").size());
+		else assertEquals(lastPageCount, response.jsonPath().getList("$").size());
 	}
 	
 	
