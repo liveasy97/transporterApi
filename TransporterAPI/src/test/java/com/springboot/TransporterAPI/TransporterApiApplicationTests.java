@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 class TransporterApiApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 	/*

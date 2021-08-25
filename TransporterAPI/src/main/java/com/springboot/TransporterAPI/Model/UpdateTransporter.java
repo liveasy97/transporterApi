@@ -1,10 +1,14 @@
 package com.springboot.TransporterAPI.Model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateTransporter {
-	private Long phoneNo;
+	private String phoneNo;
 	private String transporterLocation;
 	private String transporterName;
 	private String companyName;
