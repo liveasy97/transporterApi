@@ -5,7 +5,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main ]
 
 defaults:
   run:
@@ -13,7 +13,7 @@ defaults:
     
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ['self-hosted', 'Linux', 'X64', 'main' ]
 
     steps:
     - uses: actions/checkout@v2
@@ -33,4 +33,5 @@ jobs:
     - run: sudo docker image rm transporter || true
     - run: sudo docker build -t transporter .
     - run: sudo docker run -p 9090:9090 --name transporter-container -d transporter | echo "success" 
+
  
