@@ -13,7 +13,7 @@ defaults:
     
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ['self-hosted','dev']
 
     steps:
     - uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
       
     - run: cd ~/actions-runner/deploy/transporterApi/transporterApi/TransporterAPI
     - run: sudo docker container stop transporter-container || true
-    - run: sudo docker container rm transporter-container
+    - run: sudo docker container rm transporter-container || true
     - run: sudo docker image rm transporter || true
     - run: sudo docker build -t transporter .
     - run: sudo docker run -p 9090:9090 --name transporter-container -d transporter | echo "success" 
