@@ -13,7 +13,7 @@ defaults:
     
 jobs:
   build:
-    runs-on: ['self-hosted','devDatabase']
+    runs-on: ['self-hosted','transporterDev']
 
     steps:
     - uses: actions/checkout@v2
