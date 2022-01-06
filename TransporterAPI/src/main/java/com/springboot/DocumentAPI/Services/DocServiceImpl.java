@@ -49,7 +49,7 @@ public class DocServiceImpl implements DocService {
 	@Autowired
 	private AmazonS3 client;
 
-	private String bucketname = "liveasyimageupload";
+	private String bucketname = "liveasydocsdev";
 
 	@Transactional(rollbackFor=Exception.class)
 	@Override
