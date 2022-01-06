@@ -274,5 +274,4 @@ public class DocServiceImpl implements DocService {
 		entityDao.deleteById(entityId);
 
 	}
-
 }
